@@ -29,24 +29,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        //db.execSQL("DROP TABLE IF EXISTS $TABLE_KEYWORDS")
-        onCreate(db)
+        // Implement your logic to handle database upgrade
     }
 
-    fun addKeyword(keyword: Keyword): Boolean {
-        val db = this.writableDatabase
+    fun addKeyword(db: SQLiteDatabase, keyword: Keyword): Boolean {
         val values = ContentValues().apply {
             put(COLUMN_KEYWORD, keyword.keyword)
             put(COLUMN_TYPE, keyword.type)
         }
         val result = db.insert(TABLE_KEYWORDS, null, values)
-        db.close()
         return result != -1L
     }
 
-    fun getAllKeywords(): List<Keyword> {
+    fun getAllKeywords(db: SQLiteDatabase): List<Keyword> {
         val keywords = mutableListOf<Keyword>()
-        val db = this.readableDatabase
         val cursor = db.rawQuery("SELECT * FROM $TABLE_KEYWORDS", null)
         if (cursor.moveToFirst()) {
             do {
@@ -57,25 +53,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             } while (cursor.moveToNext())
         }
         cursor.close()
-        db.close()
         return keywords
     }
 
-    fun updateKeyword(keyword: Keyword): Boolean {
-        val db = this.writableDatabase
+    fun updateKeyword(db: SQLiteDatabase, keyword: Keyword): Boolean {
         val values = ContentValues().apply {
             put(COLUMN_KEYWORD, keyword.keyword)
             put(COLUMN_TYPE, keyword.type)
         }
         val result = db.update(TABLE_KEYWORDS, values, "$COLUMN_ID = ?", arrayOf(keyword.id.toString()))
-        db.close()
         return result > 0
     }
 
-    fun deleteKeyword(id: Int): Boolean {
-        val db = this.writableDatabase
+    fun deleteKeyword(db: SQLiteDatabase, id: Int): Boolean {
         val result = db.delete(TABLE_KEYWORDS, "$COLUMN_ID = ?", arrayOf(id.toString()))
-        db.close()
         return result > 0
     }
 }

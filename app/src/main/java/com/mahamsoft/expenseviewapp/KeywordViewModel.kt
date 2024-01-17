@@ -23,6 +23,8 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> get() = _message
 
+    private val db by lazy { databaseHelper.writableDatabase }
+
     init {
         loadKeywords()
         initializeDefaultKeywords()
@@ -30,21 +32,21 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
 
     private fun loadKeywords() {
         coroutineScope.launch {
-            val keywordsList = withContext(Dispatchers.IO) { databaseHelper.getAllKeywords() }
+            val keywordsList = withContext(Dispatchers.IO) { databaseHelper.getAllKeywords(db) }
             _keywords.value = keywordsList
         }
     }
 
     private fun initializeDefaultKeywords() {
         coroutineScope.launch {
-            val existingKeywords = withContext(Dispatchers.IO) { databaseHelper.getAllKeywords() }
+            val existingKeywords = withContext(Dispatchers.IO) { databaseHelper.getAllKeywords(db) }
 
             if (existingKeywords.isEmpty()) {
                 val defaultKeywords = listOf(
                     Keyword(keyword = "Debited", type = "Debit"),
                     Keyword(keyword = "Credited", type = "Credit")
                 )
-                defaultKeywords.forEach { databaseHelper.addKeyword(it) }
+                defaultKeywords.forEach { databaseHelper.addKeyword(db, it) }
                 loadKeywords()
             }
         }
@@ -59,7 +61,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
             }
 
             val existingKeywords = withContext(Dispatchers.IO) {
-                databaseHelper.getAllKeywords()
+                databaseHelper.getAllKeywords(db)
             }
             val isKeywordExists = existingKeywords.any {
                 it.keyword.equals(trimmedKeyword.keyword, ignoreCase = true)
@@ -69,7 +71,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
                 _message.postValue("Keyword already exists")
             } else {
                 val result = withContext(Dispatchers.IO) {
-                    databaseHelper.addKeyword(trimmedKeyword)
+                    databaseHelper.addKeyword(db, trimmedKeyword)
                 }
                 if (result) {
                     _message.postValue("Keyword added successfully")
@@ -90,7 +92,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
             }
 
             val existingKeywords = withContext(Dispatchers.IO) {
-                databaseHelper.getAllKeywords()
+                databaseHelper.getAllKeywords(db)
             }
             val isKeywordExists = existingKeywords.any {
                 it.keyword.equals(
@@ -103,7 +105,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
                 _message.postValue("Keyword already exists")
             } else {
                 val result = withContext(Dispatchers.IO) {
-                    databaseHelper.updateKeyword(trimmedKeyword)
+                    databaseHelper.updateKeyword(db, trimmedKeyword)
                 }
                 if (result) {
                     _message.postValue("Keyword updated successfully")
@@ -118,7 +120,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
     fun deleteKeyword(id: Int) {
         coroutineScope.launch {
             val result = withContext(Dispatchers.IO) {
-                databaseHelper.deleteKeyword(id)
+                databaseHelper.deleteKeyword(db, id)
             }
 
             if (result) {
@@ -134,7 +136,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
     fun confirmDeleteKeyword(id: Int) {
         coroutineScope.launch {
             val result = withContext(Dispatchers.IO) {
-                databaseHelper.deleteKeyword(id)
+                databaseHelper.deleteKeyword(db, id)
             }
             if (result) {
                 _message.postValue("Keyword deleted successfully")
@@ -147,6 +149,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
 
     override fun onCleared() {
         super.onCleared()
+        db.close() // Close the database connection
         viewModelJob.cancel()
     }
 }

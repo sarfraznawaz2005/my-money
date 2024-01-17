@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -103,6 +104,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_SMS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_SMS),
+                SMS_PERMISSION_CODE
+            )
+        }
+
         databaseHelper = DatabaseHelper(this)
         keywordViewModel = ViewModelProvider(
             this,
@@ -145,14 +158,8 @@ class MainActivity : ComponentActivity() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_SMS
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_SMS),
-                SMS_PERMISSION_CODE
-            )
-        } else {
             loadSmsMessages()
         }
     }
@@ -163,9 +170,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun loadKeywordsFromDatabase() {
+        val db = databaseHelper.readableDatabase
+
         coroutineScope.launch {
             val keywords = withContext(Dispatchers.IO) {
-                databaseHelper.getAllKeywords()
+                databaseHelper.getAllKeywords(db)
             }
 
             creditKeywords = keywords.filter { it.type == "Credit" }.map { it.keyword }
@@ -526,6 +535,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(bottom = 72.dp, end = 16.dp)
+                        .zIndex(1f)
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Keyword")
                 }
@@ -710,11 +720,17 @@ class MainActivity : ComponentActivity() {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             RadioButton(
                                                 selected = text == selectedType,
-                                                onClick = { onTypeSelected(text) }
+                                                onClick = {
+                                                    onTypeSelected(text)
+                                                    editingKeyword.value = editingKeyword.value.copy(type = text)
+                                                }
                                             )
                                             Text(
                                                 text = text,
-                                                modifier = Modifier.clickable { onTypeSelected(text) }
+                                                modifier = Modifier.clickable {
+                                                    onTypeSelected(text)
+                                                    editingKeyword.value = editingKeyword.value.copy(type = text)
+                                                }
                                             )
                                         }
                                     }

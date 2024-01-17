@@ -16,6 +16,7 @@ android {
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
+        ndk.debugSymbolLevel = "FULL"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -24,7 +25,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
