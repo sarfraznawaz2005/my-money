@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +39,8 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -338,17 +342,27 @@ class MainActivity : ComponentActivity() {
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
+
             TabRow(
                 selectedTabIndex = selectedTabIndex.value,
-                contentColor = Color.Black,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex.value]),
+                        color = Color.Blue // Custom color for the tab indicator
+                    )
+                },
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomCenter),
+                containerColor = Color(0xFFE7E7E7), // Custom container color for the TabRow
+                contentColor = Color(0xFFE7E7E7) // Custom content color for unselected tabs
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         text = { Text(title) },
                         selected = selectedTabIndex.value == index,
-                        onClick = { selectedTabIndex.value = index }
+                        onClick = { selectedTabIndex.value = index },
+                        selectedContentColor = Color.Black,
+                        unselectedContentColor = Color.DarkGray
                     )
                 }
             }
@@ -514,6 +528,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 // Floating Refresh Button
+                /*
                 FloatingActionButton(
                     onClick = onRefresh,
                     modifier = Modifier
@@ -522,6 +537,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
                 }
+                */
 
             } else if (selectedTabIndex.value == 1) {
 

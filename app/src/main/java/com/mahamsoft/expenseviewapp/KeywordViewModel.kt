@@ -43,8 +43,17 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
 
             if (existingKeywords.isEmpty()) {
                 val defaultKeywords = listOf(
-                    Keyword(keyword = "Debited", type = "Debit"),
-                    Keyword(keyword = "Credited", type = "Credit")
+                    Keyword(keyword = "credited", type = "Credit"),
+                    Keyword(keyword = "debited", type = "Debit"),
+                    Keyword(keyword = "cash withdrawal", type = "Debit"),
+                    Keyword(keyword = "fund transfer", type = "Debit"),
+                    Keyword(keyword = "pos transaction", type = "Debit"),
+                    Keyword(keyword = "charged with pkr", type = "Debit"),
+                    Keyword(keyword = "paid bill", type = "Debit"),
+                    Keyword(keyword = "paid a kelectric", type = "Debit"),
+                    Keyword(keyword = "paid a ssgc", type = "Debit"),
+                    Keyword(keyword = "eft of pkr", type = "Debit"),
+                    Keyword(keyword = "ibft of pkr", type = "Debit"),
                 )
                 defaultKeywords.forEach { databaseHelper.addKeyword(db, it) }
                 loadKeywords()
