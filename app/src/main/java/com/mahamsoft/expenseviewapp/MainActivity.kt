@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
@@ -201,18 +202,18 @@ class MainActivity : ComponentActivity() {
 
     private fun loadSmsMessages() {
         coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                isLoading.value = true // Show loading
+            isLoading.value = true // Show loading
 
+            withContext(Dispatchers.IO) {
                 if (allSmsMessages.isEmpty()) {
                     val smsReader = SmsReader(this@MainActivity)
                     allSmsMessages = smsReader.readAllSms()
                 }
 
                 filterAndCalculateTotals()
-
-                isLoading.value = false // Hide loading
             }
+
+            isLoading.value = false // Hide loading
         }
     }
 
@@ -513,7 +514,6 @@ class MainActivity : ComponentActivity() {
                 }
 
                 // Floating Refresh Button
-                /*
                 FloatingActionButton(
                     onClick = onRefresh,
                     modifier = Modifier
@@ -522,7 +522,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
                 }
-                 */
 
             } else if (selectedTabIndex.value == 1) {
 
@@ -722,14 +721,16 @@ class MainActivity : ComponentActivity() {
                                                 selected = text == selectedType,
                                                 onClick = {
                                                     onTypeSelected(text)
-                                                    editingKeyword.value = editingKeyword.value.copy(type = text)
+                                                    editingKeyword.value =
+                                                        editingKeyword.value.copy(type = text)
                                                 }
                                             )
                                             Text(
                                                 text = text,
                                                 modifier = Modifier.clickable {
                                                     onTypeSelected(text)
-                                                    editingKeyword.value = editingKeyword.value.copy(type = text)
+                                                    editingKeyword.value =
+                                                        editingKeyword.value.copy(type = text)
                                                 }
                                             )
                                         }
