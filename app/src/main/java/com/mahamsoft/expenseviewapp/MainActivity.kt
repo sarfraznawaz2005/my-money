@@ -40,6 +40,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -87,6 +88,8 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var keywordViewModel: KeywordViewModel
+
+    private var searchQuery = mutableStateOf("")
 
     // Handle the permissions result
     @Deprecated("Deprecated in Java")
@@ -407,7 +410,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp)
-                            .padding(bottom = 20.dp)
+                            .padding(bottom = 12.dp)
                     ) {
                         // Total Credit box
                         Box(
@@ -448,6 +451,24 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    // Search TextField
+                    TextField(
+                        value = searchQuery.value,
+                        onValueChange = { searchQuery.value = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
+                        label = { Text("Search SMS") }
+                    )
+
+                    // Display filtered SMS messages
+                    val filteredMessages = smsMessages.filter {
+                        searchQuery.value.isEmpty() || it.text.contains(
+                            searchQuery.value,
+                            ignoreCase = true
+                        )
+                    }
+
                     LazyColumn(
                         modifier = Modifier.padding(
                             bottom = bottomTabHeight,
@@ -485,7 +506,7 @@ class MainActivity : ComponentActivity() {
                             //Spacer(modifier = Modifier.height(16.dp))
                         }
 
-                        items(smsMessages) { sms ->
+                        items(filteredMessages) { sms ->
                             val isExpanded = remember { mutableStateOf(false) }
                             val smsBody =
                                 if (isExpanded.value) sms.text else sms.text.take(50) + if (sms.text.length > 50) "..." else ""
