@@ -55,7 +55,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.mahamsoft.expenseviewapp.ui.theme.ExpenseViewAppTheme
 import kotlinx.coroutines.*
@@ -122,15 +121,15 @@ class MainActivity : ComponentActivity() {
         keywordViewModel = ViewModelProvider(
             this,
             KeywordViewModelFactory(databaseHelper)
-        ).get(KeywordViewModel::class.java)
+        )[KeywordViewModel::class.java]
 
         loadKeywordsFromDatabase()
 
-        keywordViewModel.message.observe(this, Observer { msg ->
+        keywordViewModel.message.observe(this) { msg ->
             if (msg.isNotEmpty()) {
                 Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
             }
-        })
+        }
 
         setContent {
             ExpenseViewAppTheme {
@@ -266,7 +265,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun Double.roundToDecimalPlaces(places: Int): Double {
+    private fun Double.roundToDecimalPlaces(places: Int): Double {
         return BigDecimal(this).setScale(places, RoundingMode.HALF_UP).toDouble()
     }
 
@@ -521,7 +520,8 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .wrapContentWidth()
                                         .padding(8.dp),
-                                    textAlign = TextAlign.Right
+                                    textAlign = TextAlign.Right,
+                                    fontWeight = FontWeight.Bold
                                 )
 
                             }

@@ -17,7 +17,7 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
     private val _keywords = MutableLiveData<List<Keyword>>(emptyList())
-    val keywords: LiveData<List<Keyword>> get() = _keywords
+
     val keywordsFlow: Flow<List<Keyword>> = _keywords.asFlow()
 
     private val _message = MutableLiveData<String>()
@@ -155,20 +155,6 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
                 _message.postValue("Error deleting keyword")
             }
 
-            loadKeywords()
-        }
-    }
-
-    fun confirmDeleteKeyword(id: Int) {
-        coroutineScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                databaseHelper.deleteKeyword(db, id)
-            }
-            if (result) {
-                _message.postValue("Keyword deleted successfully")
-            } else {
-                _message.postValue("Error deleting keyword")
-            }
             loadKeywords()
         }
     }

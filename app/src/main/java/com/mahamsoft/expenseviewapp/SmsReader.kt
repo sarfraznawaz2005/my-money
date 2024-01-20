@@ -4,7 +4,6 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.Telephony
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -23,7 +22,7 @@ class SmsReader(private val context: Context) {
         cursor?.use {
             val indexBody = it.getColumnIndex(Telephony.Sms.BODY)
             val indexDate = it.getColumnIndex(Telephony.Sms.DATE)
-            
+
             while (it.moveToNext()) {
                 val smsBody = it.getString(indexBody)
                 val smsDate = it.getLong(indexDate)
