@@ -44,7 +44,14 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
             if (existingKeywords.isEmpty()) {
                 val defaultKeywords = listOf(
                     Keyword(keyword = "credited", type = "Credit"),
+                    Keyword(keyword = "received a deposit", type = "Credit"),
+                    Keyword(keyword = "received a transfer", type = "Credit"),
+                    Keyword(keyword = "refund of", type = "Credit"),
+                    Keyword(keyword = "reversal of", type = "Credit"),
                     Keyword(keyword = "debited", type = "Debit"),
+                    Keyword(keyword = "load karnay ka shukria", type = "Debit"),
+                    Keyword(keyword = "bill for", type = "Debit"),
+                    Keyword(keyword = "bill of", type = "Debit"),
                     Keyword(keyword = "cash withdrawal", type = "Debit"),
                     Keyword(keyword = "fund transfer", type = "Debit"),
                     Keyword(keyword = "pos transaction", type = "Debit"),
@@ -54,6 +61,16 @@ class KeywordViewModel(private val databaseHelper: DatabaseHelper) : ViewModel()
                     Keyword(keyword = "paid a ssgc", type = "Debit"),
                     Keyword(keyword = "eft of pkr", type = "Debit"),
                     Keyword(keyword = "ibft of pkr", type = "Debit"),
+                    Keyword(keyword = "paid successfully", type = "Debit"),
+                    Keyword(keyword = "loan payment of", type = "Debit"),
+                    Keyword(keyword = "loan repayment of", type = "Debit"),
+                    Keyword(keyword = "tax payment of", type = "Debit"),
+                    Keyword(keyword = "successfully transferred", type = "Debit"),
+                    Keyword(keyword = "you have transferred", type = "Debit"),
+                    Keyword(keyword = "your payment of", type = "Debit"),
+                    Keyword(keyword = "card payment", type = "Debit"),
+                    Keyword(keyword = "card repayment", type = "Debit"),
+                    Keyword(keyword = "your scheduled payment of", type = "Debit"),
                 )
                 defaultKeywords.forEach { databaseHelper.addKeyword(db, it) }
                 loadKeywords()

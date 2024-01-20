@@ -185,8 +185,15 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun extractAmount(smsText: String): Double {
+        /*
         val regexPattern =
             "(Amount\\s+(of\\s+)?(PKR\\s+|Rs\\.?\\s+)?\\d+(,\\d{3})*(\\.\\d+)?)|(PKR\\s+\\d+(,\\d{3})*(\\.\\d+)?)|(Rs\\.?\\s+\\d+(,\\d{3})*(\\.\\d+)?)|\\d+(,\\d+)*(\\.\\d+)? amount".toRegex(
+                RegexOption.IGNORE_CASE
+            )
+         */
+
+        val regexPattern =
+            "(?i)(?:(?:\\bamount of\\b|\\bamounting\\b|\\btotal of\\b|\\bpayment of\\b|\\bsum of\\b)\\s+)?\\s*-?\\s*\\(?(\\d+(?:[.,]\\d{3})*(\\.\\d{1,2})?)\\)?\\s*(?:PKR\\.?|Rs\\.?|PKR:|Rs:\\.?)\\b|\\b(?:PKR\\.?|Rs\\.?|PKR:|Rs:\\.?)\\s*-?\\s*\\(?(\\d+(?:[.,]\\d{3})*(\\.\\d{1,2})?)\\)?|\\d+ amount".toRegex(
                 RegexOption.IGNORE_CASE
             )
 
